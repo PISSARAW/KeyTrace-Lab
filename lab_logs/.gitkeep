@@ -1,0 +1,2 @@
+# This file keeps the lab_logs/ directory tracked by git.
+# Actual log files (*.log, *.txt, *.json) are excluded via .gitignore.
