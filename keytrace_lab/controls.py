@@ -9,6 +9,8 @@ from __future__ import annotations
 
 from typing import Optional
 
+from pynput import keyboard as _keyboard
+
 from keytrace_lab import consent as _consent
 from keytrace_lab.logger import KeyLogger
 
@@ -42,7 +44,13 @@ def start_session(log_filename: str = "session.log") -> bool:
         return False
     logger = KeyLogger(log_filename)
     logger.start()
+    listener = _keyboard.Listener(
+        on_press=logger.on_press,
+        on_release=logger.on_release,
+    )
+    listener.start()
     _current_session["logger"] = logger
+    _current_session["listener"] = listener
     return True
 
 
@@ -60,7 +68,8 @@ def stop_session() -> Optional[int]:
     if not is_session_active():
         print("No session is currently running.")
         return None
-    _current_session["listener"].stop()
+    if _current_session["listener"] is not None:
+        _current_session["listener"].stop()
     event_count = _current_session["logger"].event_count
     _current_session["logger"].stop()
     _current_session["logger"] = None
