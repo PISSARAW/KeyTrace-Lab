@@ -3,14 +3,6 @@ logger.py
 =========
 Keyboard-event capture and safe, path-restricted log writing.
 
-Implementation guide (fill in the TODO sections yourself)
----------------------------------------------------------
-1. Resolve the lab_logs/ directory relative to this file's project root.
-2. On each key-press event, format a timestamped record.
-3. Write records **only** to a file inside lab_logs/.  Raise ValueError if
-   any caller tries to write elsewhere.
-4. Expose on_press() and on_release() callbacks compatible with pynput.
-5. Keep a running count of events for safe-stop decisions.
 """
 
 from __future__ import annotations
@@ -57,25 +49,25 @@ class KeyLogger:
     def start(self) -> None:
         """
         Prepare the logger for a new session.
-
-        TODO:
-          1. Validate that LAB_LOGS_DIR exists; create it if not.
-          2. Resolve the full log path and store it in self._log_path.
-          3. Ensure self._log_path is inside LAB_LOGS_DIR (raise ValueError
-             if not — this prevents path-traversal attacks).
-          4. Set self.is_running = True and reset self.event_count = 0.
+        This method should be called before attaching the on_press and on_release callbacks to a pynput listener.
         """
-        raise NotImplementedError("KeyLogger.start() is not implemented yet")
+        if not LAB_LOGS_DIR.exists():
+            LAB_LOGS_DIR.mkdir(parents=True)
+        self._log_path = (LAB_LOGS_DIR / self.log_filename).resolve()
+        if not str(self._log_path).startswith(str(LAB_LOGS_DIR)):
+            raise ValueError("Log filename must be inside lab_logs/")
+        self.is_running = True
+        self.event_count = 0
 
     def stop(self) -> None:
         """
         Cleanly terminate the logging session.
-
-        TODO:
-          1. Set self.is_running = False.
-          2. Write a "session ended" footer to the log file.
+        After calling this method, on_press() and on_release() should do
+        nothing until start() is called again.
         """
-        raise NotImplementedError("KeyLogger.stop() is not implemented yet")
+        self.is_running = False
+        if self._log_path is not None:
+            self._write_record("=== SESSION ENDED ===")
 
     def on_press(self, key: object) -> None:
         """
@@ -86,13 +78,12 @@ class KeyLogger:
         key:
             A pynput Key or KeyCode object.
 
-        TODO:
-          1. Guard: do nothing if self.is_running is False.
-          2. Format a record: ISO-8601 timestamp + "PRESS" + str(key).
-          3. Call self._write_record(record).
-          4. Increment self.event_count.
         """
-        raise NotImplementedError("KeyLogger.on_press() is not implemented yet")
+        if not self.is_running:
+            return
+        record = f"{self._timestamp()} PRESS {str(key)}"
+        self._write_record(record)
+        self.event_count += 1
 
     def on_release(self, key: object) -> None:
         """
@@ -103,15 +94,12 @@ class KeyLogger:
         key:
             A pynput Key or KeyCode object.
 
-        TODO:
-          1. Guard: do nothing if self.is_running is False.
-          2. Format a record: ISO-8601 timestamp + "RELEASE" + str(key).
-          3. Call self._write_record(record).
-          4. Increment self.event_count.
         """
-        raise NotImplementedError(
-            "KeyLogger.on_release() is not implemented yet"
-        )
+        if not self.is_running:
+            return
+        record = f"{self._timestamp()} RELEASE {str(key)}"
+        self._write_record(record)
+        self.event_count += 1
 
     # ------------------------------------------------------------------
     # Private helpers (implement these)
@@ -123,15 +111,11 @@ class KeyLogger:
 
         This method must raise ValueError if self._log_path is not set or
         is not inside LAB_LOGS_DIR.
-
-        TODO:
-          1. Check that self._log_path is not None and is relative to
-             LAB_LOGS_DIR.  Raise ValueError on violation.
-          2. Open self._log_path in append mode and write record + newline.
         """
-        raise NotImplementedError(
-            "KeyLogger._write_record() is not implemented yet"
-        )
+        if self._log_path is None or not str(self._log_path).startswith(str(LAB_LOGS_DIR)):
+            raise ValueError("Log path is not set or is outside lab_logs/")
+        with self._log_path.open("a", encoding="utf-8") as f:
+            f.write(record + "\n")
 
     @staticmethod
     def _timestamp() -> str:

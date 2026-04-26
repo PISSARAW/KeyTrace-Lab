@@ -4,12 +4,6 @@ consent.py
 Displays the ethical warning and collects explicit user consent before the
 logger is allowed to start.
 
-Implementation guide (fill in the TODO sections yourself)
----------------------------------------------------------
-1. Print the WARNING_BANNER to stdout.
-2. Ask the user to type a specific confirmation phrase.
-3. Return True only when the phrase matches exactly; False otherwise.
-4. Never swallow the user's "no" — always honour a refusal.
 """
 
 from __future__ import annotations
@@ -37,9 +31,14 @@ CONSENT_PHRASE = "I understand and consent"
 
 def display_warning() -> None:
     """Print the ethical warning banner to stdout."""
-    # TODO: implement — print WARNING_BANNER
-    raise NotImplementedError("display_warning() is not implemented yet")
-
+    print(WARNING_BANNER)
+    print("To proceed, please type the following phrase exactly:")
+    print(f"  {CONSENT_PHRASE}")
+    if not request_consent():
+        print("Consent not given. Exiting.")
+        exit(0)
+    else:
+        print("Consent received. Starting logger...")
 
 def request_consent() -> bool:
     """
@@ -51,9 +50,5 @@ def request_consent() -> bool:
         True  — user typed the consent phrase exactly.
         False — user declined or typed something else.
     """
-    # TODO: implement
-    #   1. Call display_warning()
-    #   2. Print instructions: tell the user to type CONSENT_PHRASE to continue
-    #   3. Read input with input()
-    #   4. Return True if the stripped input == CONSENT_PHRASE, else False
-    raise NotImplementedError("request_consent() is not implemented yet")
+    user_input = input("Type here: ").strip()
+    return user_input == CONSENT_PHRASE
