@@ -1,5 +1,12 @@
 # KeyTrace Lab 🔬
 
+> **🛈 PROJET PERSONNEL — PUBLIC MAIS NON DESTINÉ À TOUS**
+> Ce dépôt est un **projet personnel d'apprentissage**. Il est laissé public à
+> des fins de transparence et de partage, mais il n'a **pas vocation à être
+> utilisé, installé ou maintenu pour un public général**. Aucun support,
+> aucune garantie de stabilité ni de compatibilité ne sont fournis.
+> Si vous tombez ici par hasard : ce code n'est probablement pas fait pour vous.
+
 > **⚠️ EDUCATIONAL USE ONLY — LOCAL ENVIRONMENT ONLY**
 > This tool is designed exclusively for learning about keyboard-event capture
 > in the context of malware analysis and defensive security research.
@@ -97,5 +104,8 @@ Log files are **not** committed to the repository (see `.gitignore`).
 
 ## Contributing
 
-This is a personal learning project.  If you spot an issue with the skeleton
-(missing stub, broken test, unclear docstring) please open an issue.
+This is a **personal learning project** — it is public, but not intended for a
+general audience and not actively open to external contributions.
+If you spot an obvious issue with the skeleton (missing stub, broken test,
+unclear docstring) feel free to open an issue, but please understand that
+pull requests, feature requests, or support questions may not be answered.
