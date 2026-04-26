@@ -38,10 +38,12 @@ def start_session(log_filename: str = "session.log") -> bool:
     if is_session_active():
         print("A session is already running. Stop it before starting a new one.")
         return False
-    if not _consent.request_consent():
+    if not _consent.display_warning():
         return False
     logger = KeyLogger(log_filename)
     logger.start()
+    _current_session["logger"] = logger
+    return True
 
 
 def stop_session() -> Optional[int]:

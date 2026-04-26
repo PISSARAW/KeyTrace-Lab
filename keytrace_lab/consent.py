@@ -29,16 +29,16 @@ WARNING_BANNER = """
 CONSENT_PHRASE = "I understand and consent"
 
 
-def display_warning() -> None:
-    """Print the ethical warning banner to stdout."""
+def display_warning() -> bool:
+    """Print the ethical warning banner and return True if consent is given."""
     print(WARNING_BANNER)
     print("To proceed, please type the following phrase exactly:")
     print(f"  {CONSENT_PHRASE}")
     if not request_consent():
         print("Consent not given. Exiting.")
-        exit(0)
-    else:
-        print("Consent received. Starting logger...")
+        return False
+    print("Consent received. Starting logger...")
+    return True
 
 def request_consent() -> bool:
     """
